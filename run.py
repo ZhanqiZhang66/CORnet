@@ -50,7 +50,7 @@ parser.add_argument('--weight_decay', default=1e-4, type=float,
 
 FLAGS, FIRE_FLAGS = parser.parse_known_args()
 
-
+#%%
 def set_gpus(n=1):
     """
     Finds all GPUs on the system and restricts to n of them that have the most
@@ -73,7 +73,7 @@ def set_gpus(n=1):
 if FLAGS.ngpus > 0:
     set_gpus(FLAGS.ngpus)
 
-
+#%%
 def get_model(pretrained=False):
     map_location = None if FLAGS.ngpus > 0 else 'cpu'
     model = getattr(cornet, f'cornet_{FLAGS.model.lower()}')
@@ -88,7 +88,7 @@ def get_model(pretrained=False):
         model = model.cuda()
     return model
 
-
+#%%
 def train(restore_path=None,  # useful when you want to restart training
           save_train_epochs=.1,  # how often save output during training
           save_val_epochs=.5,  # how often save output during validation
@@ -176,7 +176,7 @@ def train(restore_path=None,  # useful when you want to restart training
 
             data_load_start = time.time()
 
-
+#%%
 def test(layer='decoder', sublayer='avgpool', time_step=0, imsize=224):
     """
     Suitable for small image sets. If you have thousands of images or it is
@@ -201,7 +201,8 @@ def test(layer='decoder', sublayer='avgpool', time_step=0, imsize=224):
         """An ugly but effective way of accessing intermediate model features
         """
         output = output.cpu().numpy()
-        _model_feats.append(np.reshape(output, (len(output), -1)))
+        #_model_feats.append(np.reshape(output, (len(output), -1)))
+        _model_feats.append(output)
 
     try:
         m = model.module
@@ -228,9 +229,11 @@ def test(layer='decoder', sublayer='avgpool', time_step=0, imsize=224):
             model_feats.append(_model_feats[time_step])
         model_feats = np.concatenate(model_feats)
 
+
     if FLAGS.output_path is not None:
         fname = f'CORnet-{FLAGS.model}_{layer}_{sublayer}_feats.npy'
         np.save(os.path.join(FLAGS.output_path, fname), model_feats)
+
 
 
 class ImageNetTrain(object):
