@@ -23,15 +23,17 @@ def get_model(pretrained=False):
 import sys
 import os
 os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
-# sys.path.append("E:\Github_Projects\ActMax-Optimizer-Dev")
-sys.path.append(r"D:\OneDrive - UC San Diego\GitHub\ActMax-Optimizer-Dev")
-#sys.path.append(r"\data\Victoria\UCSD_projects\ActMax-Optimizer-Dev")
+# sys.path.append("E:\Github_Projects\ActMax-Optimizer-Dev")                 #Binxu local 
+sys.path.append(r"D:\OneDrive - UC San Diego\GitHub\ActMax-Optimizer-Dev")   #Victoria local
+#sys.path.append(r"\data\Victoria\UCSD_projects\ActMax-Optimizer-Dev")       #Victoria remote
 
 from core.GAN_utils import upconvGAN
 from core.Optimizers import CholeskyCMAES, ZOHA_Sphere_lr_euclid
 from core.layer_hook_utils import featureFetcher, get_module_names, get_layer_names
 from collections import defaultdict
+
 #%%
+
 class featureFetcher_recurrent:
     """ Light weighted modular feature fetcher, simpler than TorchScorer. """
     def __init__(self, model, input_size=(3, 224, 224), device="cuda", print_module=True):
@@ -62,7 +64,7 @@ class featureFetcher_recurrent:
         except KeyError:
             raise KeyError
 
-    def get_activation(self, name, ingraph=False, return_input=False):
+    def get_activation(self, name, ingraph=False, return_input=False): 
         """If returning input, it may return a list or tuple of things """
         if return_input:
             def hook(model, input, output):
@@ -97,16 +99,13 @@ G.eval().cuda().requires_grad_(False)
 model = get_model(pretrained=True)
 model.eval().requires_grad_(False)
 #%% Evolution parameters and Optimzer
-# area = "IT"
-# sublayer = "conv3"
-# time_step = 0
-# channum = 0
 
-optim = CholeskyCMAES(4096, population_size=40, init_sigma=2.0, Aupdate_freq=10, init_code=np.zeros([1, 4096]))
-# optim = ZOHA_Sphere_lr_euclid(4096, population_size=40, select_size=20, lr=1.5, sphere_norm=300)
-# optim.lr_schedule(n_gen=75, mode="exp", lim=(50, 7.33) ,) # alternative optimizer
+area = "IT"
+sublayer = "conv3"
+time_step = 0
+channum = 0
+pos = 3, 3
 
-#%% Run Evolution
 import random
 def run_evolution(model, area, sublayer, time_step, channum):
     pos = 3, 3
