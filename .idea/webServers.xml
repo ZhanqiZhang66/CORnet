@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="79ab3f4d-117b-4179-96fa-6ae0e875ad10" name="roshar">
+        <fileTransfer rootFolder="/data/Victoria" accessType="SFTP" host="roshar.ucsd.edu" port="22" sshConfigId="6c9709e4-cd60-4ed7-8761-a10c7eb2d43f" sshConfig="vzhang@roshar.ucsd.edu:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
