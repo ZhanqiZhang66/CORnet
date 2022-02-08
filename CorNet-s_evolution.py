@@ -23,8 +23,9 @@ def get_model(pretrained=False):
 import sys
 import os
 os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
-# sys.path.append("E:\Github_Projects\ActMax-Optimizer-Dev")                 #Binxu local 
-sys.path.append(r"D:\OneDrive - UC San Diego\GitHub\ActMax-Optimizer-Dev")   #Victoria local
+# sys.path.append("E:\Github_Projects\ActMax-Optimizer-Dev")                 #Binxu local
+sys.path.append(r"D:\Github\ActMax-Optimizer-Dev")                           #Binxu office
+# sys.path.append(r"D:\OneDrive - UC San Diego\GitHub\ActMax-Optimizer-Dev")   #Victoria local
 #sys.path.append(r"\data\Victoria\UCSD_projects\ActMax-Optimizer-Dev")       #Victoria remote
 
 from core.GAN_utils import upconvGAN
