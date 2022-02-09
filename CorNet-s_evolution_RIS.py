@@ -210,13 +210,13 @@ def run_evolution(model, area, sublayer, time_step, channum, pos="autocenter"):
 
 
 dataroot = r"F:\insilico_exps\CorNet-recurrent-evol"
-
+#%%
 area = "IT"
 sublayer = "output"  # None
 outdir = join(dataroot, "%s-%s"%(area, sublayer))
 os.makedirs(outdir, exist_ok=True)
 for runnum in range(5):
-    for channum in range(0, 50):
+    for channum in range(50, 100):
         for time_step in [0, 1]:
             explabel = f"{area}-{sublayer}-Ch{channum:03d}-T{time_step:d}-run{runnum:02d}"
             meta = EasyDict(area=area, sublayer=sublayer, channum=channum, time_step=time_step,
