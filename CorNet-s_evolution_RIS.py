@@ -216,7 +216,7 @@ sublayer = "output"  # None
 outdir = join(dataroot, "%s-%s"%(area, sublayer))
 os.makedirs(outdir, exist_ok=True)
 for runnum in range(5):
-    for channum in range(50, 100):
+    for channum in range(150, 200):
         for time_step in [0, 1]:
             explabel = f"{area}-{sublayer}-Ch{channum:03d}-T{time_step:d}-run{runnum:02d}"
             meta = EasyDict(area=area, sublayer=sublayer, channum=channum, time_step=time_step,
@@ -247,12 +247,42 @@ for runnum in range(5):
 # Final activation 16.68+-0.97 time 55.456 sec
 # Final activation 96.97+-6.94 time 57.806 sec
 #%%
+area = "V2"
+sublayer = "output"  # None
+outdir = join(dataroot, "%s-%s"%(area, sublayer))
+os.makedirs(outdir, exist_ok=True)
+for runnum in range(5):
+    for channum in range(50, 100):
+        for time_step in [0, 1]:
+            explabel = f"{area}-{sublayer}-Ch{channum:03d}-T{time_step:d}-run{runnum:02d}"
+            meta = EasyDict(area=area, sublayer=sublayer, channum=channum, time_step=time_step,
+                            runnum=runnum, explabel=explabel,)
+            t0 = time.time()
+            codes, scores, datadict = run_evolution(model, area, sublayer, time_step, channum, pos="autocenter")
+            t1 = time.time()
+            print(f"Final activation {scores.mean():.2f}+-{scores.std():.2f} time {t1 - t0:.3f} sec")
+            meancodes = calc_meancodes(datadict.codes_all, datadict.generations)
+            figh = visualize_trajectory(datadict.scores_all, datadict.generations, False)
+            figh.savefig(join(outdir, "score_traj_%s.png" % (explabel)))
+            plt.close(figh)
+            # mtg = visualize_image_trajectory(G, datadict.codes_all, datadict.generations, False)
+            mtg = PIL_tsrbatch(G.visualize_batch_np(meancodes), nrow=10)
+            mtg.save(join(outdir, "evol_img_traj_%s.jpg" % (explabel)))
+            bestmtg = visualize_best(G, datadict.codes_all, datadict.scores_all, False)
+            bestmtg.save(join(outdir, "bestimg_%s.jpg" % (explabel)))
+            np.savez(join(outdir, "exp_data_%s.png" % (explabel)),
+                   meancodes=meancodes, generations=datadict.generations,
+                     scores_all=datadict.scores_all, **meta,)
+            t2 = time.time()
+            print(f"Finish saving time {t2 - t0:.3f} sec")
+            # del mtg, bestmtg
+#%%
 area = "V4"
 sublayer = "output"  # None
 outdir = join(dataroot, "%s-%s"%(area, sublayer))
 os.makedirs(outdir, exist_ok=True)
 for runnum in range(5):
-    for channum in range(25, 50):
+    for channum in range(100, 200):
         for time_step in [0, 1, 2, 3]:
             explabel = f"{area}-{sublayer}-Ch{channum:03d}-T{time_step:d}-run{runnum:02d}"
             meta = EasyDict(area=area, sublayer=sublayer, channum=channum, time_step=time_step,
@@ -277,36 +307,7 @@ for runnum in range(5):
             print(f"Finish saving time {t2 - t0:.3f} sec")
             # del mtg, bestmtg
 
-#%%
-area = "V2"
-sublayer = "output"  # None
-outdir = join(dataroot, "%s-%s"%(area, sublayer))
-os.makedirs(outdir, exist_ok=True)
-for runnum in range(5):
-    for channum in range(25, 50):
-        for time_step in [0, 1]:
-            explabel = f"{area}-{sublayer}-Ch{channum:03d}-T{time_step:d}-run{runnum:02d}"
-            meta = EasyDict(area=area, sublayer=sublayer, channum=channum, time_step=time_step,
-                            runnum=runnum, explabel=explabel,)
-            t0 = time.time()
-            codes, scores, datadict = run_evolution(model, area, sublayer, time_step, channum, pos="autocenter")
-            t1 = time.time()
-            print(f"Final activation {scores.mean():.2f}+-{scores.std():.2f} time {t1 - t0:.3f} sec")
-            meancodes = calc_meancodes(datadict.codes_all, datadict.generations)
-            figh = visualize_trajectory(datadict.scores_all, datadict.generations, False)
-            figh.savefig(join(outdir, "score_traj_%s.png" % (explabel)))
-            plt.close(figh)
-            # mtg = visualize_image_trajectory(G, datadict.codes_all, datadict.generations, False)
-            mtg = PIL_tsrbatch(G.visualize_batch_np(meancodes), nrow=10)
-            mtg.save(join(outdir, "evol_img_traj_%s.jpg" % (explabel)))
-            bestmtg = visualize_best(G, datadict.codes_all, datadict.scores_all, False)
-            bestmtg.save(join(outdir, "bestimg_%s.jpg" % (explabel)))
-            np.savez(join(outdir, "exp_data_%s.png" % (explabel)),
-                   meancodes=meancodes, generations=datadict.generations,
-                     scores_all=datadict.scores_all, **meta,)
-            t2 = time.time()
-            print(f"Finish saving time {t2 - t0:.3f} sec")
-            # del mtg, bestmtg
+
 #%%
 # #%%
 # time_steps = [0, 1]
