@@ -12,9 +12,9 @@ import torchvision
 import cornet
 from PIL import Image
 #%%
-def get_model(pretrained=False):
+def get_model(model_name='cornet_s', pretrained=False):
     map_location = 'cpu'
-    model = getattr(cornet, 'cornet_s')
+    model = getattr(cornet, model_name)
     model = model(pretrained=pretrained, map_location=map_location)
     model = model.module  # remove DataParallel
     return model
@@ -24,8 +24,8 @@ import sys
 import os
 os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE"
 # sys.path.append("E:\Github_Projects\ActMax-Optimizer-Dev")                 #Binxu local
-sys.path.append(r"D:\Github\ActMax-Optimizer-Dev")                           #Binxu office
-# sys.path.append(r"D:\OneDrive - UC San Diego\GitHub\ActMax-Optimizer-Dev")   #Victoria local
+#sys.path.append(r"D:\Github\ActMax-Optimizer-Dev")                           #Binxu office
+sys.path.append(r"D:\OneDrive - UC San Diego\GitHub\ActMax-Optimizer-Dev")   #Victoria local
 #sys.path.append(r"\data\Victoria\UCSD_projects\ActMax-Optimizer-Dev")       #Victoria remote
 
 from core.GAN_utils import upconvGAN
@@ -97,7 +97,7 @@ def preprocess_fun(imgtsr, imgsize=224, ):
 G = upconvGAN("fc6")
 G.eval().cuda().requires_grad_(False)
 
-model = get_model(pretrained=True)
+model = get_model(model_name='cornet_z',pretrained=True)
 model.eval().requires_grad_(False)
 #%% Evolution parameters and Optimzer
 
@@ -135,7 +135,7 @@ sublayer = "conv3"
 
 
 C = 512 # np.shape(fetcher["target"][time_step])[1]
-channums = random.sample(range(C), 200)
+channums = random.sample(range(C), 20)
 for channum in channums:
     for time_step in time_steps:
         for i in range(3):
@@ -146,6 +146,9 @@ for channum in channums:
 
             filename = "D:\\Ponce-Lab\\Victoria\\Victoria_data\\CORnet_evolution\\{}_{}_time_{}_chan_{}_trial_{}_score{}.png".format(area, sublayer, str(time_step), str(channum), str(i), format(scores.mean(),".2f"))
             pil_image.save(filename)
+            pdf_filename = "D:\\Ponce-Lab\\Victoria\\Victoria_data\\CORnet_evolution\\{}_{}_time_{}_chan_{}_trial_{}_score{}.png".format(
+                area, sublayer, str(time_step), str(channum), str(i), format(scores.mean(), ".2f"))
+            pil_image.save(pdf_filename)
             del codes, pil_image
 
 
